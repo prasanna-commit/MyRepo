@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a1265d36-295d-4ebf-80f2-c7ab4e8d5d9f" >
+		<http:listener-connection host="0.0.0.0" port="8082" protocol="HTTPS" tlsContext="TLS_Context"/>
+	</http:listener-config>
+	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="af19b1b0-9d32-4827-b90f-beb1175110b6" >
+		<tls:key-store type="pkcs12" path="httpsdemo-dev.p12" alias="server" keyPassword="test12345" password="test12345"/>
+	</tls:context>
+	<json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="74633cfc-78af-414b-97e8-cee42ed94567" applicationName="httpsdemo" applicationVersion="1.0.0" environment="DEV" />
+	<flow name="httpsdemoFlow" doc:id="99285a97-7ffb-46da-9b0f-01f1057b0d18" >
+		<http:listener doc:name="Listener" doc:id="df456b48-fca4-4605-bbcb-e20b453dce28" config-ref="HTTP_Listener_config" path="/httpsdemo"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="2894c2d3-4121-4fbe-99ed-85791378ec43" />
+		<json-logger:logger doc:name="Logger" doc:id="edc4939c-5ffd-4f83-a045-ab2d38d3be00" config-ref="JSON_Logger_Config" message="Request Payload">
+			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+{
+    payload: JSONLoggerModule::stringifyNonJSON(payload), 
+    attributes:attributes
+}]]]></json-logger:content>
+		</json-logger:logger>
+	</flow>
+</mule>
