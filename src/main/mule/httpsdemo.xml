@@ -23,5 +23,6 @@ http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/m
     attributes:attributes
 }]]]></json-logger:content>
 		</json-logger:logger>
+		<logger level="INFO" doc:name="Logger" doc:id="b322d448-eaf9-4dcb-8df4-ee96cce2ea76" message="#[payload]"/>
 	</flow>
 </mule>
